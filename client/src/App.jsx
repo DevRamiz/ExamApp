@@ -1,122 +1,100 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+const exams = [
+  {
+    id: 1,
+    title: "JavaScript Basics",
+    course: "Web Development",
+    questions: 12,
+    average: 86,
+  },
+  {
+    id: 2,
+    title: "React Components",
+    course: "Frontend",
+    questions: 10,
+    average: 91,
+  },
+  {
+    id: 3,
+    title: "Git and GitHub",
+    course: "Development Tools",
+    questions: 8,
+    average: 78,
+  },
+];
 
+function TeacherDashboard() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="card">
+      <h2>Teacher Dashboard</h2>
+      <p className="muted">View exams and class results.</p>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <div className="exam-list">
+        {exams.map((exam) => (
+          <div className="exam-card" key={exam.id}>
+            <h3>{exam.title}</h3>
+            <p>Course: {exam.course}</p>
+            <p>Questions: {exam.questions}</p>
+            <p>Class Average: {exam.average}</p>
+            <button>View Details</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
-export default App
+function StudentPortal() {
+  const [studentName, setStudentName] = useState("");
+
+  return (
+    <div className="card">
+      <h2>Student Portal</h2>
+      <p className="muted">Enter your name and choose an available exam.</p>
+
+      <label>Student Name</label>
+      <input
+        type="text"
+        placeholder="Enter your name"
+        value={studentName}
+        onChange={(e) => setStudentName(e.target.value)}
+      />
+
+      {studentName && <p className="welcome">Welcome, {studentName}!</p>}
+
+      <div className="exam-list">
+        {exams.map((exam) => (
+          <div className="exam-card" key={exam.id}>
+            <h3>{exam.title}</h3>
+            <p>{exam.course}</p>
+            <button>Start Exam</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [role, setRole] = useState("teacher");
+
+  return (
+    <main className="app">
+      <header>
+        <h1>E-Test System</h1>
+        <p>React application for online exam management.</p>
+      </header>
+
+      <div className="role-buttons">
+        <button onClick={() => setRole("teacher")}>Teacher View</button>
+        <button onClick={() => setRole("student")}>Student View</button>
+      </div>
+
+      {role === "teacher" ? <TeacherDashboard /> : <StudentPortal />}
+    </main>
+  );
+}
+
+export default App;
