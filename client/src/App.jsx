@@ -26,13 +26,27 @@ const exams = [
 ];
 
 function TeacherDashboard() {
+  const [searchText, setSearchText] = useState("");
+
+  const filteredExams = exams.filter((exam) =>
+    exam.title.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <div className="card">
       <h2>Teacher Dashboard</h2>
       <p className="muted">View exams and class results.</p>
 
+      <label>Search Exam</label>
+      <input
+        type="text"
+        placeholder="Search by exam title"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+      />
+
       <div className="exam-list">
-        {exams.map((exam) => (
+        {filteredExams.map((exam) => (
           <div className="exam-card" key={exam.id}>
             <h3>{exam.title}</h3>
             <p>Course: {exam.course}</p>
