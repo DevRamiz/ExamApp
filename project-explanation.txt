@@ -1,0 +1,105 @@
+Project Name: E-Test System
+
+Project Type:
+React full client application without server. The app uses mock data and localStorage to simulate a database and API.
+
+Main Features:
+1. Login page for existing users.
+2. Register page for new users.
+3. Role based navigation for teacher and student.
+4. Teacher dashboard with exam statistics.
+5. Teacher exam list with search/filter by exam title or course.
+6. Teacher can change exam status between draft and published.
+7. Teacher can create a new draft exam.
+8. Teacher can add questions to a created exam.
+9. Student dashboard with available exam and submission information.
+10. Student can select a published exam.
+11. Student can answer questions and submit the exam.
+12. The system calculates a simple score after submission.
+
+Users:
+1. Teacher - manages exams, creates exams, changes exam status, and sees statistics.
+2. Student - views published exams, answers questions, and submits exams.
+
+Demo Users:
+Teacher:
+Email: teacher@test.com
+Password: 123456
+
+Student:
+Email: student@test.com
+Password: 123456
+
+Use Cases:
+1. User logs into the system.
+2. New user registers as teacher or student.
+3. Teacher views general exam statistics.
+4. Teacher searches existing exams.
+5. Teacher publishes a draft exam.
+6. Teacher creates a new exam.
+7. Teacher adds questions to the exam.
+8. Student views available published exams.
+9. Student takes an exam.
+10. Student submits answers and receives a score.
+
+Pages:
+1. LoginPage - login form.
+2. RegisterPage - registration form.
+3. TeacherDashboard - teacher statistics page.
+4. TeacherExamList - teacher exam management page.
+5. TeacherExamBuilder - teacher exam creation and question adding page.
+6. StudentDashboard - student overview page.
+7. StudentExamPage - student exam taking page.
+8. NavigationMenu - navigation between pages according to the user role.
+
+Main Mock Entities:
+1. User:
+   - id
+   - name
+   - email
+   - password
+   - role
+
+2. Exam:
+   - id
+   - title
+   - course
+   - status
+   - teacherId
+   - questions
+
+3. Question:
+   - id
+   - text
+   - options
+   - correctAnswer
+
+4. Submission:
+   - id
+   - examId
+   - studentId
+   - answers
+   - score
+   - total
+   - submittedAt
+
+Services:
+1. ConfigService - stores app name and localStorage keys.
+2. StorageService - wraps localStorage get/set/remove.
+3. LoggerService - prints actions and errors to the console.
+4. NotifyService - displays success/error messages using alert.
+5. MockApiService - simulates server API actions such as login, register, get exams, create exam, change status, add questions, and submit exams.
+
+OOP Usage:
+OOP is used in non-component code:
+1. User class.
+2. Exam class.
+3. Question class.
+4. ConfigService class.
+5. StorageService class.
+6. LoggerService class.
+7. NotifyService class.
+8. MockApiService class.
+
+Important Note:
+The project has no server and no real database. All data is stored locally in the browser using localStorage.

@@ -1,99 +1,62 @@
 import { useState } from "react";
-import "./App.css";
-
-const exams = [
-  {
-    id: 1,
-    title: "JavaScript Basics",
-    course: "Web Development",
-    questions: 12,
-    average: 86,
-  },
-  {
-    id: 2,
-    title: "React Components",
-    course: "Frontend",
-    questions: 10,
-    average: 91,
-  },
-  {
-    id: 3,
-    title: "Git and GitHub",
-    course: "Development Tools",
-    questions: 8,
-    average: 78,
-  },
-];
-
-function TeacherDashboard() {
-  return (
-    <div className="card">
-      <h2>Teacher Dashboard</h2>
-      <p className="muted">View exams and class results.</p>
-
-      <div className="exam-list">
-        {exams.map((exam) => (
-          <div className="exam-card" key={exam.id}>
-            <h3>{exam.title}</h3>
-            <p>Course: {exam.course}</p>
-            <p>Questions: {exam.questions}</p>
-            <p>Class Average: {exam.average}</p>
-            <button>View Details</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function StudentPortal() {
-  const [studentName, setStudentName] = useState("");
-
-  return (
-    <div className="card">
-      <h2>Student Portal</h2>
-      <p className="muted">Enter your name and choose an available exam.</p>
-
-      <label>Student Name</label>
-      <input
-        type="text"
-        placeholder="Enter your name"
-        value={studentName}
-        onChange={(e) => setStudentName(e.target.value)}
-      />
-
-      {studentName && <p className="welcome">Welcome, {studentName}!</p>}
-
-      <div className="exam-list">
-        {exams.map((exam) => (
-          <div className="exam-card" key={exam.id}>
-            <h3>{exam.title}</h3>
-            <p>{exam.course}</p>
-            <button>Start Exam</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+import { mockApiService } from "./api/mockApiService";
+import NavigationMenu from "./components/NavigationMenu";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import TeacherExamBuilder from "./pages/TeacherExamBuilder";
+import TeacherExamList from "./pages/TeacherExamList";
+import StudentDashboard from "./pages/StudentDashboard";
+import StudentExamPage from "./pages/StudentExamPage";
 
 function App() {
-  const [role, setRole] = useState("teacher");
+  const [currentUser, setCurrentUser] = useState(mockApiService.getCurrentUser());
+  const [authPage, setAuthPage] = useState("login");
+  const [currentPage, setCurrentPage] = useState(
+    currentUser?.role === "teacher" ? "teacher-dashboard" : "student-dashboard"
+  );
+
+  function handleLogin(user) {
+    setCurrentUser(user);
+    setCurrentPage(user.role === "teacher" ? "teacher-dashboard" : "student-dashboard");
+  }
+
+  function handleLogout() {
+    mockApiService.logout();
+    setCurrentUser(null);
+    setAuthPage("login");
+  }
+
+  function renderPage() {
+    if (!currentUser) return null;
+
+    if (currentPage === "teacher-dashboard") return <TeacherDashboard />;
+    if (currentPage === "teacher-exams") return <TeacherExamList />;
+    if (currentPage === "teacher-builder") return <TeacherExamBuilder currentUser={currentUser} />;
+    if (currentPage === "student-dashboard") return <StudentDashboard currentUser={currentUser} />;
+    if (currentPage === "student-exam") return <StudentExamPage currentUser={currentUser} />;
+
+    return <TeacherDashboard />;
+  }
+
+  if (!currentUser) {
+    return authPage === "login" ? (
+      <LoginPage onLogin={handleLogin} goToRegister={() => setAuthPage("register")} />
+    ) : (
+      <RegisterPage onRegister={handleLogin} goToLogin={() => setAuthPage("login")} />
+    );
+  }
 
   return (
-    <main className="app">
-      <header>
-        <h1>E-Test System</h1>
-        <p>React application for online exam management.</p>
-      </header>
-
-      <div className="role-buttons">
-        <button onClick={() => setRole("teacher")}>Teacher View</button>
-        <button onClick={() => setRole("student")}>Student View</button>
-      </div>
-
-      {role === "teacher" ? <TeacherDashboard /> : <StudentPortal />}
-    </main>
+    <div className="app-shell">
+      <NavigationMenu
+        currentUser={currentUser}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        onLogout={handleLogout}
+      />
+      <main className="main-content">{renderPage()}</main>
+    </div>
   );
 }
 

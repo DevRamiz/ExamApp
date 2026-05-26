@@ -1,0 +1,42 @@
+@startuml
+class ConfigService {
+  appName
+  storageKeys
+  getAppName()
+  getStorageKey(key)
+}
+
+class StorageService {
+  get(key, fallbackValue)
+  set(key, value)
+  remove(key)
+}
+
+class LoggerService {
+  info(message, data)
+  error(message, error)
+}
+
+class NotifyService {
+  success(message)
+  error(message)
+}
+
+class MockApiService {
+  initializeData()
+  register(name, email, password, role)
+  login(email, password)
+  logout()
+  getCurrentUser()
+  getExams()
+  getPublishedExams()
+  createExam(title, course, teacherId)
+  addQuestion(examId, questionText, options, correctAnswer)
+  changeExamStatus(examId, status)
+  submitExam(examId, studentId, answers)
+}
+
+MockApiService --> ConfigService
+MockApiService --> StorageService
+MockApiService --> LoggerService
+@enduml

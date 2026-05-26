@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+actor Teacher
+actor Student
+
+rectangle "E-Test System" {
+  usecase "Register" as UC1
+  usecase "Login" as UC2
+  usecase "View Teacher Dashboard" as UC3
+  usecase "Create Exam" as UC4
+  usecase "Add Questions" as UC5
+  usecase "Change Exam Status" as UC6
+  usecase "Search Exams" as UC7
+  usecase "View Student Dashboard" as UC8
+  usecase "Take Exam" as UC9
+  usecase "Submit Answers" as UC10
+}
+
+Teacher --> UC1
+Teacher --> UC2
+Teacher --> UC3
+Teacher --> UC4
+Teacher --> UC5
+Teacher --> UC6
+Teacher --> UC7
+Student --> UC1
+Student --> UC2
+Student --> UC8
+Student --> UC9
+Student --> UC10
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+class User {
+  id
+  name
+  email
+  password
+  role
+}
+
+class Exam {
+  id
+  title
+  course
+  status
+  teacherId
+  questions
+}
+
+class Question {
+  id
+  text
+  options
+  correctAnswer
+}
+
+class Submission {
+  id
+  examId
+  studentId
+  answers
+  score
+  total
+  submittedAt
+}
+
+User "1" -- "many" Exam : creates
+Exam "1" -- "many" Question : contains
+User "1" -- "many" Submission : submits
+Exam "1" -- "many" Submission : receives
+@enduml

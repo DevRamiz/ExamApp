@@ -1,0 +1,87 @@
+Suggested Git workflow for submission
+
+Start from dev:
+cd ~/ExamApp
+git checkout dev
+git pull origin dev
+
+Feature 1 - services:
+git checkout -b feature/services
+# copy services files
+git add client/src/services
+git commit -m "add generic services"
+git push -u origin feature/services
+# open PR to dev and merge
+
+Feature 2 - mock api and models:
+git checkout dev
+git pull origin dev
+git checkout -b feature/mock-api
+# copy api and models files
+git add client/src/api client/src/models
+git commit -m "add mock database and api service"
+git push -u origin feature/mock-api
+# open PR to dev and merge
+
+Feature 3 - auth pages:
+git checkout dev
+git pull origin dev
+git checkout -b feature/auth
+# copy LoginPage and RegisterPage
+git add client/src/pages/LoginPage.jsx client/src/pages/RegisterPage.jsx
+git commit -m "add login and register pages"
+git push -u origin feature/auth
+# open PR to dev and merge
+
+Feature 4 - teacher pages:
+git checkout dev
+git pull origin dev
+git checkout -b feature/teacher-pages
+# copy teacher pages
+git add client/src/pages/TeacherDashboard.jsx client/src/pages/TeacherExamList.jsx client/src/pages/TeacherExamBuilder.jsx
+git commit -m "add teacher pages for exam management"
+git push -u origin feature/teacher-pages
+# open PR to dev and merge
+
+Feature 5 - student pages:
+git checkout dev
+git pull origin dev
+git checkout -b feature/student-pages
+# copy student pages
+git add client/src/pages/StudentDashboard.jsx client/src/pages/StudentExamPage.jsx
+git commit -m "add student pages for taking exams"
+git push -u origin feature/student-pages
+# open PR to dev and merge
+
+Feature 6 - navigation and app integration:
+git checkout dev
+git pull origin dev
+git checkout -b feature/navigation-app
+git add client/src/components/NavigationMenu.jsx client/src/App.jsx client/src/App.css client/src/main.jsx
+git commit -m "connect pages with navigation menu"
+git push -u origin feature/navigation-app
+# open PR to dev and merge
+
+Feature 7 - comments:
+git checkout dev
+git pull origin dev
+git checkout -b feature/comments
+# add simple personal comments in Hebrew inside code
+git add .
+git commit -m "add simple code comments"
+git push -u origin feature/comments
+# open PR to dev and merge
+
+Feature 8 - explanation and diagrams:
+git checkout dev
+git pull origin dev
+git checkout -b feature/docs
+git add project-explanation.txt diagrams
+git commit -m "add project explanation and diagrams"
+git push -u origin feature/docs
+# open PR to dev and merge
+
+Build:
+cd client
+npm install
+npm run build
