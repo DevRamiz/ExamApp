@@ -1,0 +1,5 @@
+Code Comments Explanation
+
+The project was divided into components, pages, services, API mock files, and OOP models.
+
+The app uses React state to switch between pages and manage the current logged-in user.
