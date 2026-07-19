@@ -1,0 +1,78 @@
+@startuml
+entity users {
+  * id : SERIAL <<PK>>
+  --
+  name : VARCHAR
+  email : VARCHAR <<UNIQUE>>
+  password_hash : TEXT
+  role : admin | teacher | student
+  is_active : BOOLEAN
+  failed_login_attempts : INTEGER
+  locked_until : TIMESTAMPTZ
+  created_at : TIMESTAMPTZ
+  updated_at : TIMESTAMPTZ
+}
+entity exams {
+  * id : SERIAL <<PK>>
+  --
+  lecturer_id : INTEGER <<FK>>
+  title : VARCHAR
+  description : TEXT
+  duration_minutes : INTEGER
+  status : draft | published | closed
+  questions : JSONB
+  pass_score : NUMERIC
+  available_from : TIMESTAMPTZ
+  closes_at : TIMESTAMPTZ
+  created_at : TIMESTAMPTZ
+  updated_at : TIMESTAMPTZ
+  published_at : TIMESTAMPTZ
+}
+entity submissions {
+  * id : SERIAL <<PK>>
+  --
+  exam_id : INTEGER <<FK>>
+  student_id : INTEGER <<FK>>
+  status : in_progress | submitted | graded
+  answers : JSONB
+  auto_score : NUMERIC
+  manual_score : NUMERIC
+  final_score : NUMERIC
+  feedback : TEXT
+  results_published : BOOLEAN
+  deadline_at : TIMESTAMPTZ
+  answered_count : INTEGER
+  current_question_id : VARCHAR
+  last_seen_at : TIMESTAMPTZ
+  tab_switches : INTEGER
+  connection_status : VARCHAR
+}
+entity notifications {
+  * id : SERIAL <<PK>>
+  --
+  user_id : INTEGER <<FK>>
+  type : VARCHAR
+  title : VARCHAR
+  message : TEXT
+  data : JSONB
+  is_read : BOOLEAN
+  created_at : TIMESTAMPTZ
+  read_at : TIMESTAMPTZ
+}
+entity audit_logs {
+  * id : BIGSERIAL <<PK>>
+  --
+  user_id : INTEGER <<FK, NULLABLE>>
+  action : VARCHAR
+  entity_type : VARCHAR
+  entity_id : VARCHAR
+  details : JSONB
+  ip_address : VARCHAR
+  created_at : TIMESTAMPTZ
+}
+users ||--o{ exams : lecturer owns
+users ||--o{ submissions : student owns
+exams ||--o{ submissions : has attempts
+users ||--o{ notifications : receives
+users |o--o{ audit_logs : performs
+@enduml

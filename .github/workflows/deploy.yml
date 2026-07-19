@@ -1,0 +1,13 @@
+name: Optional deployment hook
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger configured deployment
+        run: curl --fail --request POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"

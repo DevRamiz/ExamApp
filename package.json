@@ -1,0 +1,30 @@
+{
+  "name": "examflow-full-stack",
+  "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server",
+    "services/*"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "dev": "concurrently -n SERVER,CLIENT -c auto \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "test": "npm run test -w server",
+    "db:migrate": "npm run db:migrate -w server",
+    "db:seed": "npm run db:seed -w server",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:reset": "docker compose down -v && docker compose up --build -d",
+    "docker:logs": "docker compose logs -f",
+    "docker:status": "docker compose ps",
+    "dev:ai": "npm start -w examflow-ai-service",
+    "dev:reports": "npm start -w examflow-report-service",
+    "dev:all": "concurrently -n SERVER,CLIENT,AI,REPORT -c auto \"npm run dev -w server\" \"npm run dev -w client\" \"npm start -w examflow-ai-service\" \"npm start -w examflow-report-service\"",
+    "verify": "npm test && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

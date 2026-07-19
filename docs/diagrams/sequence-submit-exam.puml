@@ -1,0 +1,30 @@
+@startuml
+actor Student
+participant "React Client" as Client
+participant "Express API" as API
+participant "Submission Service" as Service
+participant "Grading Service" as Grade
+database PostgreSQL as DB
+
+Student -> Client : Open exam
+Client -> API : POST /api/exams/:id/start
+API -> Service : startSubmission()
+Service -> DB : INSERT or load attempt
+DB --> Service : Submission + safe questions
+Service --> Client : Attempt without correct answers
+
+loop Every 10 seconds
+  Client -> API : PATCH /submissions/:id/autosave
+  API -> Service : autosaveSubmission(answers)
+  Service -> DB : UPDATE answers JSONB
+end
+
+Student -> Client : Submit exam
+Client -> API : POST /submissions/:id/submit
+API -> Service : submitExam(answers)
+Service -> Grade : gradeAutomaticQuestions()
+Grade --> Service : automatic score
+Service -> DB : UPDATE status and scores
+DB --> Service : Saved submission
+Service --> Client : Submitted
+@enduml

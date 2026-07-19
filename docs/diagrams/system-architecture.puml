@@ -1,0 +1,26 @@
+@startuml
+skinparam componentStyle rectangle
+actor Admin
+actor Lecturer
+actor Student
+component "React Client\nResponsive UI + Auto-save" as Client
+component "Express Core API\nAuth, Exams, Submissions, Analytics, Admin" as API
+component "WebSocket\nNotifications + Monitoring" as WS
+database "PostgreSQL\nRelational + JSONB" as DB
+component "AI Service\nQuestion / feedback suggestions" as AI
+component "Report Service\nCSV / printable HTML" as Reports
+cloud "GitHub Actions + Docker + Render" as DevOps
+Admin --> Client
+Lecturer --> Client
+Student --> Client
+Client --> API : REST JSON + JWT
+Client <--> WS : real-time JSON
+API --> DB : parameterized SQL
+API --> WS : broadcast events
+API --> AI : internal HTTP JSON
+API --> Reports : internal HTTP JSON
+DevOps ..> Client
+DevOps ..> API
+DevOps ..> AI
+DevOps ..> Reports
+@enduml

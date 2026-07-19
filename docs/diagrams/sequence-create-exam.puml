@@ -1,0 +1,27 @@
+@startuml
+actor Lecturer
+participant "React Client" as Client
+participant "Express API" as API
+participant "Auth/Role Middleware" as Auth
+participant "Exam Service" as Service
+database PostgreSQL as DB
+participant WebSocket as WS
+
+Lecturer -> Client : Fill exam form
+Client -> API : POST /api/exams + JWT
+API -> Auth : Verify teacher role
+Auth --> API : Authorized
+API -> Service : createExam(payload)
+Service -> Service : Validate questions and points
+Service -> DB : INSERT draft exam + questions JSONB
+DB --> Service : Created exam
+Service --> API : Exam DTO
+API --> Client : 201 Created
+
+Lecturer -> Client : Publish exam
+Client -> API : PATCH /api/exams/:id/publish
+API -> Service : publishExam()
+Service -> DB : UPDATE status = published
+Service -> WS : Broadcast exam_published
+API --> Client : Published exam
+@enduml

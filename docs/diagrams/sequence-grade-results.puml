@@ -1,0 +1,32 @@
+@startuml
+actor Lecturer
+actor Student
+participant "React Client" as Client
+participant "Express API" as API
+participant "Submission Service" as Service
+database PostgreSQL as DB
+participant WebSocket as WS
+
+Lecturer -> Client : Open submission
+Client -> API : GET /api/submissions/:id
+API -> Service : getSubmission()
+Service -> DB : SELECT submission, exam, questions
+DB --> Service : Full grading data
+Service --> Client : Answers and correct answers
+
+Lecturer -> Client : Add points and feedback
+Client -> API : PATCH /api/submissions/:id/grade
+API -> Service : gradeSubmission()
+Service -> DB : UPDATE manual/final scores
+Service --> Client : Graded submission
+
+Lecturer -> Client : Publish results
+Client -> API : PATCH /api/exams/:id/results/publish
+API -> DB : Verify no pending grading
+API -> DB : SET results_published = true
+API -> WS : results_published event
+WS --> Student : Real-time notification
+Student -> Client : Open My Results
+Client -> API : GET /api/submissions/my
+API --> Client : Scores, answers and feedback
+@enduml

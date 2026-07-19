@@ -1,0 +1,90 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: examflow-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-examflow}
+      POSTGRES_USER: ${POSTGRES_USER:-examflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-examflow_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - examflow_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-examflow} -d ${POSTGRES_DB:-examflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  ai-service:
+    build: ./services/ai-service
+    container_name: examflow-ai
+    restart: unless-stopped
+    environment:
+      PORT: 4101
+      AI_PROVIDER: ${AI_PROVIDER:-local}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_BASE_URL: ${AI_BASE_URL:-https://api.openai.com/v1}
+      AI_MODEL: ${AI_MODEL:-}
+    ports:
+      - "4101:4101"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4101/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  report-service:
+    build: ./services/report-service
+    container_name: examflow-reports
+    restart: unless-stopped
+    environment:
+      PORT: 4102
+    ports:
+      - "4102:4102"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4102/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build: ./server
+    container_name: examflow-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-examflow}:${POSTGRES_PASSWORD:-examflow_password}@db:5432/${POSTGRES_DB:-examflow}
+      JWT_SECRET: ${JWT_SECRET:-examflow_development_secret_change_me}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      CLIENT_ORIGIN: http://localhost:3000
+      SEED_DATABASE: "true"
+      AI_SERVICE_URL: http://ai-service:4101
+      REPORT_SERVICE_URL: http://report-service:4102
+      LOGIN_MAX_ATTEMPTS: ${LOGIN_MAX_ATTEMPTS:-5}
+      LOGIN_LOCK_MINUTES: ${LOGIN_LOCK_MINUTES:-15}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  client:
+    build: ./client
+    container_name: examflow-client
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_healthy
+    ports:
+      - "3000:80"
+
+volumes:
+  examflow_db_data:

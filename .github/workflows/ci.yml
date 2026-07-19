@@ -1,0 +1,24 @@
+name: ExamFlow CI
+on:
+  push:
+    branches: [main, dev, "feature/**"]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: docker compose config
+      - run: docker build -t examflow-server ./server
+      - run: docker build -t examflow-client ./client
+      - run: docker build -t examflow-ai ./services/ai-service
+      - run: docker build -t examflow-reports ./services/report-service

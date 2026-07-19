@@ -1,0 +1,78 @@
+@startuml
+class User {
+  id
+  name
+  email
+  role
+  isActive
+  lockedUntil
+}
+class Exam {
+  title
+  durationMinutes
+  status
+  passScore
+  questions JSONB
+  publish()
+  close()
+}
+class Question {
+  id
+  type
+  text
+  points
+  options
+  correctAnswer
+}
+class Submission {
+  answers JSONB
+  status
+  scores
+  deadline
+  monitoring fields
+  autosave()
+  submit()
+  grade()
+}
+class Notification {
+  type
+  title
+  message
+  data JSONB
+  isRead
+}
+class AuditLog {
+  action
+  entity
+  details JSONB
+  ipAddress
+}
+class CoreServices {
+  Auth
+  Exams
+  Submissions
+  Analytics
+  Monitoring
+  Admin
+  Notifications
+}
+class AIMicroservice {
+  generateQuestions()
+  suggestFeedback()
+}
+class ReportMicroservice {
+  buildCsv()
+  buildHtml()
+}
+User "1" --> "many" Exam : lecturer
+User "1" --> "many" Submission : student
+User "1" --> "many" Notification
+User "0..1" --> "many" AuditLog
+Exam *-- Question
+Exam --> Submission
+CoreServices ..> User
+CoreServices ..> Exam
+CoreServices ..> Submission
+CoreServices ..> AIMicroservice : HTTP
+CoreServices ..> ReportMicroservice : HTTP
+@enduml

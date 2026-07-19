@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: examflow
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: examflow-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: SEED_DATABASE
+        value: true
+      - key: TRUST_PROXY
+        value: true
+      - key: AI_SERVICE_URL
+        fromService:
+          type: pserv
+          name: examflow-ai
+          property: hostport
+      - key: REPORT_SERVICE_URL
+        fromService:
+          type: pserv
+          name: examflow-reports
+          property: hostport
+
+  - type: pserv
+    name: examflow-ai
+    runtime: docker
+    dockerfilePath: ./services/ai-service/Dockerfile
+    envVars:
+      - key: PORT
+        value: 4101
+      - key: AI_PROVIDER
+        value: local
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_BASE_URL
+        value: https://api.openai.com/v1
+      - key: AI_MODEL
+        sync: false
+
+  - type: pserv
+    name: examflow-reports
+    runtime: docker
+    dockerfilePath: ./services/report-service/Dockerfile
+    envVars:
+      - key: PORT
+        value: 4102
+
+databases:
+  - name: examflow-db
+    databaseName: examflow
+    user: examflow
